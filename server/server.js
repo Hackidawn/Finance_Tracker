@@ -9,25 +9,39 @@ const transactionRoutes = require('./routes/transactionRoutes');
 
 const app = express();
 
-// ✅ Allow specific frontend origin (Vercel frontend URL)
+// ✅ Allow specific frontend origin (Vercel URL)
 const allowedOrigins = ['https://finance-tracker-ard5d6kcf-achints-projects-e510b495.vercel.app'];
 
 app.use(cors({
-  origin: allowedOrigins,
-  credentials: true, // optional, only needed if sending cookies or auth headers
+  origin: function (origin, callback) {
+    // allow requests with no origin like mobile apps or curl
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true, // allows headers like Authorization
 }));
 
 app.use(express.json());
 
-// ✅ API Routes
+// ✅ Logging middleware (optional but helpful)
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+});
+
+// ✅ Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/transactions', transactionRoutes);
 
-// ✅ Connect to MongoDB
+// ✅ MongoDB connection
 const PORT = process.env.PORT || 5000;
+
 mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
+  // These are deprecated in newer MongoDB drivers
 })
 .then(() => {
   console.log('✅ MongoDB connected');

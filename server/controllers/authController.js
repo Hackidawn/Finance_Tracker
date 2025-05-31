@@ -9,7 +9,8 @@ exports.register = async (req, res) => {
     const exists = await User.findOne({ email });
     if (exists) return res.status(400).json({ msg: 'User already exists' });
 
-    const user = await User.create({ email, password });
+    const user = await User.create({ email, password }); // No need to hash here
+
     res.json({ token: generateToken(user._id) });
   } catch (err) {
     res.status(500).json({ msg: err.message });
@@ -23,6 +24,7 @@ exports.login = async (req, res) => {
     if (!user || !(await user.matchPassword(password))) {
       return res.status(401).json({ msg: 'Invalid credentials' });
     }
+
     res.json({ token: generateToken(user._id) });
   } catch (err) {
     res.status(500).json({ msg: err.message });

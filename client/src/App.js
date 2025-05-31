@@ -4,24 +4,23 @@ import { useContext } from 'react';
 import AuthForm from './components/AuthForm';
 import Dashboard from './components/Dashboard';
 
-// Protect routes that require authentication
-const PrivateRoute = ({ children }) => {
-  const { token } = useContext(AuthContext);
-  return token ? children : <Navigate to="/login" />;
-};
-
-// Redirect authenticated users away from login/register
-const PublicRoute = ({ children }) => {
-  const { token } = useContext(AuthContext);
-  return token ? <Navigate to="/" /> : children;
-};
-
 function App() {
+  // ✅ Private route wrapper
+  const PrivateRoute = ({ children }) => {
+    const { token } = useContext(AuthContext);
+    return token ? children : <Navigate to="/login" />;
+  };
+
+  // ✅ Public route wrapper
+  const PublicRoute = ({ children }) => {
+    const { token } = useContext(AuthContext);
+    return token ? <Navigate to="/" /> : children;
+  };
+
   return (
     <BrowserRouter>
       <AuthProvider>
         <Routes>
-          {/* Public routes */}
           <Route
             path="/login"
             element={
@@ -38,8 +37,6 @@ function App() {
               </PublicRoute>
             }
           />
-
-          {/* Private route (requires auth) */}
           <Route
             path="/"
             element={
