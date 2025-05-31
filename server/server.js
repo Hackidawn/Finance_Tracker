@@ -12,16 +12,16 @@ const app = express();
 // ✅ Temporarily allow all origins (FIX CORS ERROR)
 // Must be BEFORE any route definitions
 const corsOptions = {
-  origin: (origin, callback) => {
-    if (!origin || origin.endsWith('.vercel.app')) {
-      callback(null, true);
+  origin: function (origin, callback) {
+    if (!origin || /\.vercel\.app$/.test(origin)) {
+      callback(null, true); // Allow Vercel subdomains and tools like Postman
     } else {
       callback(new Error('Not allowed by CORS'));
     }
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization'],
 };
 
 app.use(cors(corsOptions));
