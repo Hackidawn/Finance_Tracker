@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5000/api',
+  baseURL: 'https://finance-tracker-0uec.onrender.com/api', // ✅ your live backend
 });
 
 export default API;
