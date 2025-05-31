@@ -8,9 +8,15 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem('token') || '');
 
   const login = (t) => {
-    localStorage.setItem('token', t);
-    setToken(t);
-    navigate('/');
+    console.log('✅ Received token:', t); // Debug log
+
+    if (t) {
+      localStorage.setItem('token', t);
+      setToken(t);
+      navigate('/');
+    } else {
+      console.error('❌ No token received during login');
+    }
   };
 
   const logout = () => {
