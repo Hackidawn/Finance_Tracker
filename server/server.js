@@ -11,9 +11,9 @@ const app = express();
 
 // ✅ Temporarily allow all origins (FIX CORS ERROR)
 app.use(cors({
-  origin: '*',
+  origin: 'https://finance-tracker-ard5d6kcf-achints-projects-e510b495.vercel.app',
+  credentials: true
 }));
-
 app.use(express.json());
 
 // ✅ Logging middleware (optional)
