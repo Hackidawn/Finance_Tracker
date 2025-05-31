@@ -12,10 +12,16 @@ const app = express();
 // ✅ Temporarily allow all origins (FIX CORS ERROR)
 // Must be BEFORE any route definitions
 const corsOptions = {
-  origin: 'https://finance-tracker-qtrymql4v-achints-projects-e510b495.vercel.app',
+  origin: (origin, callback) => {
+    if (!origin || origin.endsWith('.vercel.app')) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 };
 
 app.use(cors(corsOptions));
