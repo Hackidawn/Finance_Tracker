@@ -9,32 +9,28 @@ const transactionRoutes = require('./routes/transactionRoutes');
 
 const app = express();
 
-// ✅ Temporary open CORS + origin logging (for debugging)
+// ✅ Temporarily allow all origins (FIX CORS ERROR)
 app.use(cors({
-  origin: function (origin, callback) {
-    console.log('🌐 Incoming origin:', origin); // Log the origin
-    callback(null, true); // Allow all origins temporarily
-  },
-  credentials: true, // Allows Authorization headers
+  origin: '*',
 }));
 
 app.use(express.json());
 
-// ✅ Optional: log all requests to console
+// ✅ Logging middleware (optional)
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.url}`);
   next();
 });
 
-// ✅ API Routes
+// ✅ Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/transactions', transactionRoutes);
 
-// ✅ Connect to MongoDB
+// ✅ MongoDB connection
 const PORT = process.env.PORT || 5000;
 
 mongoose.connect(process.env.MONGO_URI, {
-  // options like useNewUrlParser are no longer required
+  // These options are now ignored by MongoDB driver v4+
 })
 .then(() => {
   console.log('✅ MongoDB connected');
