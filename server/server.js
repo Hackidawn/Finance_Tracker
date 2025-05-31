@@ -9,45 +9,37 @@ const transactionRoutes = require('./routes/transactionRoutes');
 
 const app = express();
 
-// ✅ Define allowed origins (production + local dev)
-const allowedOrigins = [
-  'https://finance-tracker-ard5d6kcf-achints-projects-e510b495.vercel.app',
-  'http://localhost:3000'
-];
-
-// ✅ Configure CORS
+// ✅ Temporary open CORS + origin logging (for debugging)
 app.use(cors({
   origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      console.error(`❌ CORS error: Origin ${origin} not allowed`);
-      callback(new Error('Not allowed by CORS'));
-    }
+    console.log('🌐 Incoming origin:', origin); // Log the origin
+    callback(null, true); // Allow all origins temporarily
   },
-  credentials: true
+  credentials: true, // Allows Authorization headers
 }));
 
 app.use(express.json());
 
-// ✅ Optional: request logger
+// ✅ Optional: log all requests to console
 app.use((req, res, next) => {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
+  console.log(`${req.method} ${req.url}`);
   next();
 });
 
-// ✅ Routes
+// ✅ API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/transactions', transactionRoutes);
 
-// ✅ MongoDB connection
+// ✅ Connect to MongoDB
 const PORT = process.env.PORT || 5000;
 
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => {
-    console.log('✅ MongoDB connected');
-    app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
-  })
-  .catch(err => {
-    console.error('❌ MongoDB connection failed:', err.message);
-  });
+mongoose.connect(process.env.MONGO_URI, {
+  // options like useNewUrlParser are no longer required
+})
+.then(() => {
+  console.log('✅ MongoDB connected');
+  app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+})
+.catch(err => {
+  console.error('❌ MongoDB connection failed:', err.message);
+});
