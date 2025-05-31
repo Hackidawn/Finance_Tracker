@@ -2,9 +2,9 @@ import axios from 'axios';
 
 const API = axios.create({
   baseURL: 'https://finance-tracker-0uec.onrender.com/api',
+  withCredentials: true, // ⬅️ required to send cookies/auth headers across origins
 });
 
-// Automatically attach token from localStorage (if available)
 API.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
