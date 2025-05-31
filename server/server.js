@@ -12,7 +12,7 @@ const app = express();
 // ✅ Temporarily allow all origins (FIX CORS ERROR)
 // Must be BEFORE any route definitions
 app.use(cors({
-  origin: 'https://finance-tracker-ard5d6kcf-achints-projects-e510b495.vercel.app',
+  origin: 'https://finance-tracker-1djg0xi6w-achints-projects-e510b495.vercel.app',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
