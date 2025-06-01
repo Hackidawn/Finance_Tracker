@@ -11,10 +11,15 @@ const app = express();
 
 // ✅ Temporarily allow all origins (FIX CORS ERROR)
 // Must be BEFORE any route definitions
+const allowedOrigins = [
+  'https://finance-tracker-zynx.vercel.app',
+  'https://finance-tracker-ard5d6kcf-achints-projects-e510b495.vercel.app',
+];
+
 const corsOptions = {
   origin: function (origin, callback) {
-    if (!origin || /\.vercel\.app$/.test(origin)) {
-      callback(null, true); // Allow Vercel subdomains and tools like Postman
+    if (!origin || allowedOrigins.includes(origin) || /\.vercel\.app$/.test(origin)) {
+      callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
     }
@@ -23,6 +28,7 @@ const corsOptions = {
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 };
+
 
 app.use(cors(corsOptions));
 app.use(express.json());
