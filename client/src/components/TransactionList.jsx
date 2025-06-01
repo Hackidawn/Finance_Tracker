@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import API from '../api';
+import html2pdf from 'html2pdf.js'; // ✅ Make sure this is installed
 
 const TransactionList = () => {
   const [transactions, setTransactions] = useState([]);
@@ -15,6 +16,11 @@ const TransactionList = () => {
     fetchData();
   };
 
+  const handleDownloadPDF = () => {
+    const element = document.getElementById('pdf-content');
+    html2pdf().from(element).save('transactions.pdf');
+  };
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -26,63 +32,70 @@ const TransactionList = () => {
     <div style={container}>
       <div style={header}>
         <h2 style={title}>Transaction History</h2>
-        <button onClick={() => setShowSplit(!showSplit)} style={toggleButton}>
-          {showSplit ? 'View All' : 'Split View'}
-        </button>
+        <div>
+          <button onClick={() => setShowSplit(!showSplit)} style={toggleButton}>
+            {showSplit ? 'View All' : 'Split View'}
+          </button>
+          <button onClick={handleDownloadPDF} style={pdfButton}>
+            Download PDF
+          </button>
+        </div>
       </div>
 
-      {!showSplit ? (
-        <ul style={listStyle}>
-          {transactions.map(tx => (
-            <li key={tx._id} style={itemStyle}>
-              <div style={rowStyle}>
-                <div>
-                  <p>{tx.category} - {tx.type}</p>
-                  <p style={{ fontSize: '0.8rem', color: '#999' }}>
-                    {new Date(tx.date).toLocaleDateString()}
-                  </p>
-                </div>
-                <div>
-                  <strong style={{ color: tx.type === 'income' ? '#22c55e' : '#ef4444' }}>
-                    ₹{tx.amount}
-                  </strong>
-                  <button onClick={() => handleDelete(tx._id)} style={deleteButton}>🗑️</button>
-                </div>
-              </div>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <div style={splitContainer}>
-          <div style={splitColumn}>
-            <h4 style={splitTitle}>Income</h4>
-            <ul style={listStyle}>
-              {incomeTransactions.map(tx => (
-                <li key={tx._id} style={itemStyle}>
-                  <div style={rowStyle}>
-                    <span>{tx.category}</span>
-                    <span style={{ color: '#22c55e' }}>₹{tx.amount}</span>
+      <div id="pdf-content">
+        {!showSplit ? (
+          <ul style={listStyle}>
+            {transactions.map(tx => (
+              <li key={tx._id} style={itemStyle}>
+                <div style={rowStyle}>
+                  <div>
+                    <p>{tx.category} - {tx.type}</p>
+                    <p style={{ fontSize: '0.8rem', color: '#999' }}>
+                      {new Date(tx.date).toLocaleDateString()}
+                    </p>
                   </div>
-                </li>
-              ))}
-            </ul>
-          </div>
+                  <div>
+                    <strong style={{ color: tx.type === 'income' ? '#22c55e' : '#ef4444' }}>
+                      ₹{tx.amount}
+                    </strong>
+                    <button onClick={() => handleDelete(tx._id)} style={deleteButton}>🗑️</button>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <div style={splitContainer}>
+            <div style={splitColumn}>
+              <h4 style={splitTitle}>Income</h4>
+              <ul style={listStyle}>
+                {incomeTransactions.map(tx => (
+                  <li key={tx._id} style={itemStyle}>
+                    <div style={rowStyle}>
+                      <span>{tx.category}</span>
+                      <span style={{ color: '#22c55e' }}>₹{tx.amount}</span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-          <div style={splitColumn}>
-            <h4 style={splitTitle}>Expense</h4>
-            <ul style={listStyle}>
-              {expenseTransactions.map(tx => (
-                <li key={tx._id} style={itemStyle}>
-                  <div style={rowStyle}>
-                    <span>{tx.category}</span>
-                    <span style={{ color: '#ef4444' }}>₹{tx.amount}</span>
-                  </div>
-                </li>
-              ))}
-            </ul>
+            <div style={splitColumn}>
+              <h4 style={splitTitle}>Expense</h4>
+              <ul style={listStyle}>
+                {expenseTransactions.map(tx => (
+                  <li key={tx._id} style={itemStyle}>
+                    <div style={rowStyle}>
+                      <span>{tx.category}</span>
+                      <span style={{ color: '#ef4444' }}>₹{tx.amount}</span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };
@@ -113,6 +126,17 @@ const toggleButton = {
   padding: '0.3rem 0.6rem',
   borderRadius: '5px',
   backgroundColor: '#3b82f6',
+  color: 'white',
+  border: 'none',
+  cursor: 'pointer',
+  marginRight: '0.5rem',
+};
+
+const pdfButton = {
+  fontSize: '0.8rem',
+  padding: '0.3rem 0.6rem',
+  borderRadius: '5px',
+  backgroundColor: '#10b981',
   color: 'white',
   border: 'none',
   cursor: 'pointer',
