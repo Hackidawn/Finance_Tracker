@@ -9,8 +9,7 @@ const transactionRoutes = require('./routes/transactionRoutes');
 
 const app = express();
 
-// ✅ Temporarily allow all origins (FIX CORS ERROR)
-// Must be BEFORE any route definitions
+// ✅ CORS setup
 const allowedOrigins = [
   'https://finance-tracker-zynx.vercel.app',
   'https://finance-tracker-ard5d6kcf-achints-projects-e510b495.vercel.app',
@@ -18,9 +17,12 @@ const allowedOrigins = [
 
 const corsOptions = {
   origin: function (origin, callback) {
+    console.log('🌐 Incoming Origin:', origin);
     if (!origin || allowedOrigins.includes(origin) || /\.vercel\.app$/.test(origin)) {
+      console.log('✅ Origin allowed:', origin);
       callback(null, true);
     } else {
+      console.log('❌ Origin blocked:', origin);
       callback(new Error('Not allowed by CORS'));
     }
   },
@@ -29,11 +31,11 @@ const corsOptions = {
   allowedHeaders: ['Content-Type', 'Authorization'],
 };
 
-
 app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // ✅ Handle preflight properly
 app.use(express.json());
 
-// ✅ Logging middleware (optional)
+// ✅ Log all incoming requests
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.url}`);
   next();
@@ -46,9 +48,7 @@ app.use('/api/transactions', transactionRoutes);
 // ✅ MongoDB connection
 const PORT = process.env.PORT || 5000;
 
-mongoose.connect(process.env.MONGO_URI, {
-  // These options are now ignored by MongoDB driver v4+
-})
+mongoose.connect(process.env.MONGO_URI)
 .then(() => {
   console.log('✅ MongoDB connected');
   app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
