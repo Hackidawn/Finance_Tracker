@@ -4,8 +4,8 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 dotenv.config();
 
-const authRoutes = require('./routes/authRoutes');
-const transactionRoutes = require('./routes/transactionRoutes');
+// const authRoutes = require('./routes/authRoutes');
+// const transactionRoutes = require('./routes/transactionRoutes');
 
 const app = express();
 
@@ -42,8 +42,8 @@ app.use((req, res, next) => {
 });
 
 // ✅ Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/transactions', transactionRoutes);
+// app.use('/api/auth', authRoutes);
+// app.use('/api/transactions', transactionRoutes);
 
 // ✅ MongoDB connection
 const PORT = process.env.PORT || 5000;
