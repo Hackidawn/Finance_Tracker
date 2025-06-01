@@ -11,11 +11,21 @@ const app = express();
 
 // ✅ Temporarily allow all origins (FIX CORS ERROR)
 // Must be BEFORE any route definitions
+// ✅ Set allowed Vercel domains
+const allowedOrigins = [
+  'https://finance-tracker-zynx.vercel.app', // your actual frontend
+];
+
+// ✅ CORS Options
 const corsOptions = {
   origin: function (origin, callback) {
-    if (!origin || /\.vercel\.app$/.test(origin)) {
-      callback(null, true); // Allow Vercel subdomains and tools like Postman
+    console.log('🌐 Incoming Origin:', origin); // Log every request origin
+
+    if (!origin || allowedOrigins.includes(origin) || /\.vercel\.app$/.test(origin)) {
+      console.log('✅ Origin allowed:', origin);
+      callback(null, true);
     } else {
+      console.log('❌ Origin blocked:', origin);
       callback(new Error('Not allowed by CORS'));
     }
   },
@@ -25,6 +35,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // ✅ Handle preflight OPTIONS correctly
 app.use(express.json());
 
 // ✅ Logging middleware (optional)
